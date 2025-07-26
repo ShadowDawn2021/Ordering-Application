@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Accounts from "./pages/Accounts";
 import Promo from "./pages/Promo";
 import Contact from "./pages/Contact";
+import AdminAccount from "./pages/AdminAccount";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="promo" element={<Promo />} />
           <Route path="contact" element={<Contact />} />
           <Route path="account" element={<Accounts />} />
+          <Route path="account-admin" element={<AdminAccount />} />
           <Route path="gallery" element={<Gallery />} />
           <Route path="about" element={<About />} />
         </Route>

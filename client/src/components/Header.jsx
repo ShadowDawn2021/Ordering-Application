@@ -1,26 +1,61 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext.jsx";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function Header() {
   const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = useState(false);
   const { userData, backendUrl, setUserData, setIsLoggedin } =
     useContext(AppContext);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const dropdownTimeout = useRef(null);
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(
+        backendUrl + "/api/auth/logout",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      setUserData(null);
+      setIsLoggedin(false);
+      document.cookie = "token=; Max-Age=0";
+      navigate("/");
+    } catch (error) {
+      toast.error("Logout failed" + error.message);
+    }
+  };
+
+  const openDropdown = () => {
+    if (dropdownTimeout.current) clearTimeout(dropdownTimeout.current);
+    setDropdownOpen(true);
+  };
+
+  const closeDropdown = () => {
+    dropdownTimeout.current = setTimeout(() => {
+      setDropdownOpen(false);
+    }, 200);
+  };
 
   return (
     <header className="bg-sushi-rice shadow-md font-sawarabi">
       <div className="max-w-screen-xl mx-auto flex items-center justify-between px-6 py-4">
+        {/* Logo */}
         <div className="flex items-center space-x-3">
           <img
             src="/logo.jpg"
             alt="Logo"
-            className="w-12 h-12 object-contain rounded-full"
+            className="w-12 h-12 object-contain rounded-full cursor-pointer"
             onClick={() => navigate("/")}
           />
           <h1
-            className="text-2xl font-bold text-sushi-soy tracking-wide"
+            className="text-2xl font-bold text-sushi-soy tracking-wide cursor-pointer"
             onClick={() => navigate("/")}
           >
             Sushi House
@@ -47,13 +82,46 @@ function Header() {
         </nav>
 
         {/* Desktop Account Buttons */}
-        <div className="hidden md:flex items-center space-x-3">
-          <Link
-            to="/login"
-            className="bg-sushi-orange text-white text-base px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"
-          >
-            Login
-          </Link>
+        <div className="hidden md:flex items-center space-x-3 relative">
+          {userData?.firstName ? (
+            <div
+              className="relative"
+              onMouseEnter={openDropdown}
+              onMouseLeave={closeDropdown}
+            >
+              <button className="bg-sushi-orange text-white text-base px-4 py-2 rounded-full font-medium hover:bg-sushi-pink transition">
+                {userData.firstName}
+              </button>
+
+              {dropdownOpen && (
+                <div
+                  className="absolute top-full right-0 mt-2 bg-white shadow-lg rounded-md w-40 py-2 z-50"
+                  onMouseEnter={openDropdown}
+                  onMouseLeave={closeDropdown}
+                >
+                  <Link
+                    to="/account"
+                    className="block px-4 py-2 text-sushi-soy hover:bg-sushi-orange hover:text-white transition"
+                  >
+                    Account
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sushi-soy hover:bg-sushi-orange hover:text-white transition"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="bg-sushi-orange text-white text-base px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"
+            >
+              Login
+            </Link>
+          )}
           <Link
             to="/cart"
             className="bg-sushi-orange text-white text-base px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"
@@ -77,7 +145,6 @@ function Header() {
           <Link to="/menu" className="block hover:text-sushi-orange transition">
             Menu
           </Link>
-
           <Link
             to="/promo"
             className="block hover:text-sushi-orange transition"
@@ -104,12 +171,29 @@ function Header() {
           </Link>
 
           <div className="pt-2 border-t border-sushi-soy/20 space-y-2">
-            <Link
-              to="/login"
-              className="block w-full text-center bg-sushi-orange text-white px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"
-            >
-              Login
-            </Link>
+            {userData?.firstName ? (
+              <>
+                <Link
+                  to="/account"
+                  className="block w-full text-center bg-sushi-orange text-white px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"
+                >
+                  {userData.firstName}'s Account
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-center bg-sushi-orange text-white px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                className="block w-full text-center bg-sushi-orange text-white px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"
+              >
+                Login
+              </Link>
+            )}
             <Link
               to="/cart"
               className="block w-full text-center bg-sushi-orange text-white px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"

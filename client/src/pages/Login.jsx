@@ -16,52 +16,53 @@ function Login() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isRegistered, setIsRegistered] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
+
+      if (data.success) {
+        toast.success("Login successful!");
+        setIsLoggedin(true);
+        getUserData();
+        navigate("/");
+      } else {
+        toast.error(data.message || "Login failed");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || err.message);
+    }
+  };
+
+  const handleRegister = async (e) => {
     e.preventDefault();
 
-    if (!isRegistered && password !== confirmPassword) {
+    if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
 
     try {
-      if (isRegistered) {
-        // Login
-        const { data } = await axios.post(
-          `${backendUrl}/api/auth/login`,
-          { email, password },
-          { withCredentials: true }
-        );
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(backendUrl + "/api/auth/register", {
+        firstName,
+        lastName,
+        address,
+        email,
+        password,
+      });
 
-        if (data.success) {
-          toast.success("Login successful!");
-          setIsLoggedin(true);
-          getUserData();
-          navigate("/");
-        } else {
-          toast.error(data.message || "Login failed");
-        }
+      if (data.success) {
+        toast.success("Registered successfully!");
+        setIsLoggedin(true);
+        getUserData();
+        navigate("/");
       } else {
-        // Register
-        const { data } = await axios.post(
-          `${backendUrl}/api/auth/register`,
-          {
-            firstName,
-            lastName,
-            address,
-            email,
-            password,
-            confirmPassword,
-          },
-          { withCredentials: true }
-        );
-
-        if (data.success) {
-          toast.success("Registered successfully!");
-          setIsRegistered(true); // Switch to login mode
-        } else {
-          toast.error(data.message || "Registration failed");
-        }
+        toast.error(data.message || "Registration failed");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
@@ -78,7 +79,10 @@ function Login() {
           {isRegistered ? "Log in to your account" : "Create an account"}
         </p>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form
+          className="space-y-4"
+          onSubmit={isRegistered ? handleLogin : handleRegister}
+        >
           {!isRegistered && (
             <>
               <div>

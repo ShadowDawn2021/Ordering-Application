@@ -1,11 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import userModel from "../model/userModel";
+import userModel from "../model/userModel.js";
 
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { firstName, lastName, address, email, password } = req.body;
 
-  if (!name || !email || !password) {
+  if (!firstName || !lastName || !address || !email || !password) {
     return res
       .status(400)
       .json({ success: false, message: "Missing Credentials" });
@@ -17,15 +17,34 @@ export const register = async (req, res) => {
     if (userExist) {
       return res
         .status(409)
-        .json({ success: false, message: "Email already in use" });
+        .json({ success: false, message: "Email already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new userModel({ name, email, password: hashedPassword });
+    const user = new userModel({
+      firstName,
+      lastName,
+      address,
+      email,
+      password: hashedPassword,
+    });
 
     await user.save();
+
+    //Cookie
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
   } catch (error) {
-    return res.status;
+    return res
+      .status(500)
+      .json({ success: false, message: `Error register, ${error.message}` });
   }
 };
 
@@ -48,7 +67,9 @@ export const login = async (req, res) => {
     }
     const passMatch = await bcrypt.compare(password, user.password);
     if (!passMatch) {
-      return res.status();
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid Credentials" });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -88,7 +109,7 @@ export const logout = async (req, res) => {
 export const passwordReset = async (req, res) => {
   const { OTP, email, newPassword } = req.body;
 
-  if ((!OTP || !email, !newPassword)) {
+  if (!OTP || !email || !newPassword) {
     res.status(400).json({ success: false, message: "Missing Credentials" });
   }
 
@@ -105,5 +126,18 @@ export const passwordReset = async (req, res) => {
     user.password = hashedPassword;
 
     await user.save();
-  } catch (error) {}
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Error Reseting Password" });
+  }
+};
+
+//Checks if the user is authenitcated
+export const isAuthenticated = async (req, res) => {
+  try {
+    return res.json({ success: true });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
 };

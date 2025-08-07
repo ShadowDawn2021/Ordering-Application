@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { AppContext } from "../context/AppContext.jsx";
 
 function Header() {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const { userData, backendUrl, setUserData, setIsLoggedin } =
+    useContext(AppContext);
 
   return (
     <header className="bg-sushi-rice shadow-md font-sawarabi">
@@ -46,10 +49,10 @@ function Header() {
         {/* Desktop Account Buttons */}
         <div className="hidden md:flex items-center space-x-3">
           <Link
-            to="/account"
+            to="/login"
             className="bg-sushi-orange text-white text-base px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"
           >
-            Account
+            Login
           </Link>
           <Link
             to="/cart"
@@ -102,10 +105,10 @@ function Header() {
 
           <div className="pt-2 border-t border-sushi-soy/20 space-y-2">
             <Link
-              to="/account"
+              to="/login"
               className="block w-full text-center bg-sushi-orange text-white px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"
             >
-              Account
+              Login
             </Link>
             <Link
               to="/cart"

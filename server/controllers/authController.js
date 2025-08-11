@@ -42,12 +42,10 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res
-      .status(201)
-      .json({
-        success: true,
-        message: "Register Success, Welcome to Sushi House!",
-      });
+    return res.status(201).json({
+      success: true,
+      message: "Register Success, Welcome to Sushi House!",
+    });
   } catch (error) {
     return res
       .status(500)
@@ -137,6 +135,31 @@ export const passwordReset = async (req, res) => {
     return res
       .status(400)
       .json({ success: false, message: "Error Reseting Password" });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  const { firstName, lastName, address, email } = req.body;
+  const userId = req.userId;
+
+  try {
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.address = address;
+    user.email = email;
+    await user.save();
+    res.status(200).json({ success: true, message: "Profile Updated" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to updated profile" });
   }
 };
 

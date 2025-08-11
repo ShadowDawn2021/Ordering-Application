@@ -24,7 +24,7 @@ function App() {
           <Route path="promo" element={<Promo />} />
           <Route path="contact" element={<Contact />} />
           <Route path="account" element={<Accounts />} />
-          <Route path="account-admin" element={<AdminAccount />} />
+          <Route path="adminAccount" element={<AdminAccount />} />
           <Route path="gallery" element={<Gallery />} />
           <Route path="about" element={<About />} />
           <Route path="login" element={<Login />} />

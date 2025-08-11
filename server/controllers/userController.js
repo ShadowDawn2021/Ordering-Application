@@ -18,6 +18,7 @@ export const getUserData = async (req, res) => {
         lastName: user.lastName,
         address: user.address,
         email: user.email,
+        role: user.role,
         isVerified: user.isVerified,
         _id: user._id,
       },

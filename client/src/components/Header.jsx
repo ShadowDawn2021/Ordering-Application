@@ -100,7 +100,7 @@ function Header() {
                   onMouseLeave={closeDropdown}
                 >
                   <Link
-                    to="/account"
+                    to={userData.role == "admin" ? "/adminAccount" : "/account"}
                     className="block px-4 py-2 text-sushi-soy hover:bg-sushi-orange hover:text-white transition"
                   >
                     Account

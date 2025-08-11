@@ -1,4 +1,6 @@
 import { useState } from "react";
+import AddProduct from "../components/AddProduct";
+import GetProduct from "../components/GetProduct";
 
 function AdminAccount() {
   const [activeTab, setActiveTab] = useState("products");
@@ -40,12 +42,12 @@ function AdminAccount() {
       <main className="flex-1 p-6 overflow-auto bg-white">
         {activeTab === "products" && (
           <div className="text-xl text-gray-600">
-            [ ProductList Component Here ]
+            <GetProduct />
           </div>
         )}
         {activeTab === "add" && (
           <div className="text-xl text-gray-600">
-            [ AddProduct Component Here ]
+            <AddProduct />
           </div>
         )}
       </main>

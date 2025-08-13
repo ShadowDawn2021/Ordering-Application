@@ -68,86 +68,108 @@ function AddProduct() {
   };
 
   return (
-    <form className="max-w-lg space-y-4" onSubmit={handleSubmit}>
-      {message && <div className="text-sm">{message}</div>}
+    <div className="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Add New Product</h2>
+      {message && (
+        <div
+          className={`text-sm mb-4 ${
+            message.startsWith("✅") ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {message}
+        </div>
+      )}
 
-      <input
-        name="name"
-        placeholder="Name"
-        value={formData.name}
-        onChange={handleChange}
-        className="border p-2 w-full"
-        required
-      />
-      <input
-        name="price"
-        type="number"
-        placeholder="Price"
-        value={formData.price}
-        onChange={handleChange}
-        className="border p-2 w-full"
-        required
-      />
-      <textarea
-        name="description"
-        placeholder="Description"
-        value={formData.description}
-        onChange={handleChange}
-        className="border p-2 w-full"
-      />
-      <select
-        name="category"
-        value={formData.category}
-        onChange={handleChange}
-        className="border p-2 w-full"
-        required
-      >
-        <option>Sushi Roll</option>
-        <option>Sashimi</option>
-        <option>Nigiri</option>
-        <option>Bento</option>
-        <option>Appetizer</option>
-        <option>Drink</option>
-        <option>Dessert</option>
-      </select>
-      <label className="flex items-center gap-2">
+      <form className="space-y-5" onSubmit={handleSubmit}>
         <input
-          type="checkbox"
-          name="isAvailable"
-          checked={formData.isAvailable}
+          name="name"
+          placeholder="Product Name"
+          value={formData.name}
           onChange={handleChange}
+          className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 outline-none"
+          required
         />
-        Available
-      </label>
-      <input
-        name="ingredients"
-        placeholder="Ingredients (comma separated)"
-        value={formData.ingredients}
-        onChange={handleChange}
-        className="border p-2 w-full"
-      />
-      <input
-        name="tags"
-        placeholder="Tags (comma separated)"
-        value={formData.tags}
-        onChange={handleChange}
-        className="border p-2 w-full"
-      />
-      <input
-        name="spiceLevel"
-        type="number"
-        min="0"
-        max="5"
-        placeholder="Spice Level (0-5)"
-        value={formData.spiceLevel}
-        onChange={handleChange}
-        className="border p-2 w-full"
-      />
 
-      <button type="submit" className="bg-black text-white px-4 py-2 rounded">
-        Add Product
-      </button>
-    </form>
+        <input
+          name="price"
+          type="number"
+          placeholder="Price"
+          value={formData.price}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 outline-none"
+          required
+        />
+
+        <textarea
+          name="description"
+          placeholder="Description"
+          value={formData.description}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 outline-none"
+        />
+
+        <select
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 outline-none"
+          required
+        >
+          <option>Sushi Roll</option>
+          <option>Sashimi</option>
+          <option>Nigiri</option>
+          <option>Bento</option>
+          <option>Appetizer</option>
+          <option>Drink</option>
+          <option>Dessert</option>
+        </select>
+
+        <label className="flex items-center gap-3 text-gray-700">
+          <input
+            type="checkbox"
+            name="isAvailable"
+            checked={formData.isAvailable}
+            onChange={handleChange}
+            className="w-5 h-5 text-indigo-500 rounded focus:ring-indigo-500"
+          />
+          Available
+        </label>
+
+        <input
+          name="ingredients"
+          placeholder="Ingredients (comma separated)"
+          value={formData.ingredients}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 outline-none"
+        />
+
+        <input
+          name="tags"
+          placeholder="Tags (comma separated)"
+          value={formData.tags}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 outline-none"
+        />
+
+        <input
+          name="spiceLevel"
+          type="number"
+          min="0"
+          max="5"
+          placeholder="Spice Level (0-5)"
+          value={formData.spiceLevel}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-indigo-500 outline-none"
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200"
+        >
+          ➕ Add Product
+        </button>
+      </form>
+    </div>
   );
 }
 

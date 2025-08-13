@@ -56,3 +56,29 @@ export const getProducts = async (req, res) => {
       .json({ success: false, message: "Could not load products" });
   }
 };
+
+export const deleteProducts = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await productModel.findById(id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product does not exist",
+      });
+    }
+
+    await productModel.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error while deleting product",
+    });
+  }
+};

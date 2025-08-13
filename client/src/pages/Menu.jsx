@@ -1,11 +1,10 @@
 import React from "react";
-import Products from "../components/Products";
+import GetProduct from "../components/GetProduct";
 
 function Menu() {
   return (
     <div>
-      Menu
-      <Products />
+      <GetProduct title="Our Dishes" />
     </div>
   );
 }

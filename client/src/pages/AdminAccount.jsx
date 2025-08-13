@@ -42,7 +42,7 @@ function AdminAccount() {
       <main className="flex-1 p-6 overflow-auto bg-white">
         {activeTab === "products" && (
           <div className="text-xl text-gray-600">
-            <GetProduct />
+            <GetProduct title="Products Displayed" />
           </div>
         )}
         {activeTab === "add" && (

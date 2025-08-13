@@ -3,12 +3,15 @@ import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
+import EditProductModal from "./EditProduct";
 
 function GetProduct({ title }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { backendUrl, userData } = useContext(AppContext);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   // Fetch products
   useEffect(() => {
@@ -34,6 +37,12 @@ function GetProduct({ title }) {
 
     fetchProducts();
   }, [backendUrl]);
+
+  //Open Edit Product Modal
+  const openModal = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
 
   // Delete product
   const handleDelete = async (id) => {
@@ -100,7 +109,7 @@ function GetProduct({ title }) {
                 {isAdmin && (
                   <div className="mt-4 flex gap-2">
                     <button
-                      onClick={() => toast.info(`Edit ${product.name}`)}
+                      onClick={() => openModal(product)}
                       className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
                     >
                       Edit
@@ -118,6 +127,21 @@ function GetProduct({ title }) {
           ))}
         </div>
       )}
+
+      <EditProductModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
+        onUpdated={() => {
+          // Refresh product list after update
+          axios
+            .get(`${backendUrl}/api/product/products`, {
+              withCredentials: true,
+            })
+            .then((res) => setProducts(res.data.data))
+            .catch((err) => toast.error(err.message));
+        }}
+      />
     </div>
   );
 }

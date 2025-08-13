@@ -82,3 +82,46 @@ export const deleteProducts = async (req, res) => {
     });
   }
 };
+
+export const editProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      price,
+      description,
+      category,
+      tags,
+      ingredients,
+      spiceLevel,
+    } = req.body;
+
+    const product = await productModel.findById(id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+    product.name = name;
+    product.price = price;
+    product.description = description;
+    product.category = category;
+    product.tags = tags;
+    product.ingredients = ingredients;
+    product.spiceLevel = spiceLevel;
+
+    await product.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      product,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to edit product",
+    });
+  }
+};

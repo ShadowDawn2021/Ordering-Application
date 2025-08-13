@@ -1,6 +1,8 @@
 import { useState } from "react";
 import AddProduct from "../components/AddProduct";
 import GetProduct from "../components/GetProduct";
+import ManagePromotions from "../components/ManagePromotions";
+import AddAccount from "../components/AddAccount";
 
 function AdminAccount() {
   const [activeTab, setActiveTab] = useState("products");
@@ -25,14 +27,39 @@ function AdminAccount() {
           </li>
           <li>
             <button
-              onClick={() => setActiveTab("add")}
+              onClick={() => setActiveTab("addProducts")}
               className={`w-full text-left px-3 py-2 rounded ${
-                activeTab === "add"
+                activeTab === "addProducts"
                   ? "bg-black text-white"
                   : "hover:bg-gray-200"
               }`}
             >
               Add Product
+            </button>
+          </li>
+
+          <li>
+            <button
+              onClick={() => setActiveTab("promo")}
+              className={`w-full text-left px-3 py-2 rounded ${
+                activeTab === "promo"
+                  ? "bg-black text-white"
+                  : "hover:bg-gray-200"
+              }`}
+            >
+              Manage Promotions
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveTab("accounts")}
+              className={`w-full text-left px-3 py-2 rounded ${
+                activeTab === "accounts"
+                  ? "bg-black text-white"
+                  : "hover:bg-gray-200"
+              }`}
+            >
+              Manage Accounts
             </button>
           </li>
         </ul>
@@ -45,9 +72,21 @@ function AdminAccount() {
             <GetProduct title="Products Displayed" />
           </div>
         )}
-        {activeTab === "add" && (
+        {activeTab === "addProducts" && (
           <div className="text-xl text-gray-600">
             <AddProduct />
+          </div>
+        )}
+
+        {activeTab === "promo" && (
+          <div className="text-xl text-gray-600">
+            <ManagePromotions />
+          </div>
+        )}
+
+        {activeTab === "accounts" && (
+          <div className="text-xl text-gray-600">
+            <AddAccount />
           </div>
         )}
       </main>

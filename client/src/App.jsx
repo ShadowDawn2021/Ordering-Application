@@ -12,6 +12,7 @@ import Promo from "./pages/Promo";
 import Contact from "./pages/Contact";
 import AdminAccount from "./pages/AdminAccount";
 import Login from "./pages/Login";
+import Cart from "./pages/Cart";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="gallery" element={<Gallery />} />
           <Route path="about" element={<About />} />
           <Route path="login" element={<Login />} />
+          <Route path="cart" element={<Cart />} />
         </Route>
       </Routes>
     </>

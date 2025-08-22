@@ -7,12 +7,13 @@ import { toast } from "react-toastify";
 
 function Header() {
   const navigate = useNavigate();
-  const { userData, backendUrl, setUserData, setIsLoggedin } =
+  const { userData, backendUrl, setUserData, setIsLoggedin, cart } =
     useContext(AppContext);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const dropdownTimeout = useRef(null);
+  const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const handleLogout = async () => {
     try {
@@ -126,7 +127,7 @@ function Header() {
             to="/cart"
             className="bg-sushi-orange text-white text-base px-4 py-2 rounded-full hover:bg-sushi-pink transition font-medium"
           >
-            Cart (0)
+            Cart ({cartCount})
           </Link>
         </div>
 

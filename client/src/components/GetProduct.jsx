@@ -12,6 +12,7 @@ function GetProduct({ title }) {
   const { backendUrl, userData } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const { addToCart } = useContext(AppContext);
 
   // Fetch products
   useEffect(() => {
@@ -63,6 +64,16 @@ function GetProduct({ title }) {
     }
   };
 
+  //Add to Cart
+  const handleAddToCart = (product) => {
+    if (!product.isAvailable) {
+      toast.error("This product is out of stock");
+      return;
+    }
+    addToCart(product);
+    toast.success(`${product.name} added to cart`);
+  };
+
   const isAdmin = userData?.role === "admin"; // Assuming your backend sets role in userData
 
   if (loading) return <p className="text-gray-500">Loading products...</p>;
@@ -104,6 +115,13 @@ function GetProduct({ title }) {
                 {!product.isAvailable && (
                   <p className="text-red-500 text-sm mt-1">Out of Stock</p>
                 )}
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  className="mt-3 w-full px-4 py-2 bg-sushi-orange text-white text-sm font-semibold rounded-lg hover:bg-orange-600 transition"
+                  disabled={!product.isAvailable}
+                >
+                  {product.isAvailable ? "Add to Cart" : "Out of Stock"}
+                </button>
 
                 {/* Admin Controls */}
                 {isAdmin && (

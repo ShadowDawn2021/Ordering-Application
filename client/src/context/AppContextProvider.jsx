@@ -7,6 +7,20 @@ export const AppContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [isLoggedin, setIsLoggedin] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [cart, setCart] = useState([]);
+
+  // Load from localStorage when app starts
+  useEffect(() => {
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+      setCart(JSON.parse(savedCart));
+    }
+  }, []);
+
+  // Save to localStorage whenever cart changes
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
   const getAuthState = async () => {
     try {
@@ -37,6 +51,19 @@ export const AppContextProvider = (props) => {
       toast.error(error.message);
     }
   };
+  const addToCart = (product) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item._id === product._id);
+      if (existing) {
+        return prev.map((item) =>
+          item._id === product._id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+  };
 
   const value = {
     backendUrl,
@@ -45,6 +72,8 @@ export const AppContextProvider = (props) => {
     userData,
     setUserData,
     getUserData,
+    addToCart,
+    cart,
   };
 
   return (

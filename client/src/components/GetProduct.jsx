@@ -1,4 +1,3 @@
-// src/components/GetProduct.jsx
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -9,10 +8,10 @@ function GetProduct({ title }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { backendUrl, userData } = useContext(AppContext);
+  const { backendUrl, userData, addToCart } = useContext(AppContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const { addToCart } = useContext(AppContext);
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Fetch products
   useEffect(() => {
@@ -39,7 +38,16 @@ function GetProduct({ title }) {
     fetchProducts();
   }, [backendUrl]);
 
-  //Open Edit Product Modal
+  // Unique categories
+  const categories = ["All", ...new Set(products.map((p) => p.category))];
+
+  // Filtered products based on category
+  const filteredProducts =
+    selectedCategory === "All"
+      ? products
+      : products.filter((p) => p.category === selectedCategory);
+
+  // Open Edit Product Modal
   const openModal = (product) => {
     setSelectedProduct(product);
     setIsModalOpen(true);
@@ -64,7 +72,7 @@ function GetProduct({ title }) {
     }
   };
 
-  //Add to Cart
+  // Add to Cart
   const handleAddToCart = (product) => {
     if (!product.isAvailable) {
       toast.error("This product is out of stock");
@@ -74,7 +82,7 @@ function GetProduct({ title }) {
     toast.success(`${product.name} added to cart`);
   };
 
-  const isAdmin = userData?.role === "admin"; // Assuming your backend sets role in userData
+  const isAdmin = userData?.role === "admin";
 
   if (loading) return <p className="text-gray-500">Loading products...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
@@ -82,11 +90,29 @@ function GetProduct({ title }) {
   return (
     <div className="max-w-screen-xl mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold mb-6 text-sushi-soy">{title}</h2>
-      {products.length === 0 ? (
+
+      {/* Category Filter */}
+      <div className="mb-6 flex flex-wrap gap-2">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+              selectedCategory === cat
+                ? "bg-sushi-orange text-white"
+                : "bg-gray-200 hover:bg-gray-300"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {filteredProducts.length === 0 ? (
         <p className="text-gray-500">No products found</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <div
               key={product._id}
               className="bg-white rounded-lg shadow-md overflow-hidden"
@@ -115,6 +141,7 @@ function GetProduct({ title }) {
                 {!product.isAvailable && (
                   <p className="text-red-500 text-sm mt-1">Out of Stock</p>
                 )}
+
                 <button
                   onClick={() => handleAddToCart(product)}
                   className="mt-3 w-full px-4 py-2 bg-sushi-orange text-white text-sm font-semibold rounded-lg hover:bg-orange-600 transition"
@@ -151,7 +178,6 @@ function GetProduct({ title }) {
         onClose={() => setIsModalOpen(false)}
         product={selectedProduct}
         onUpdated={() => {
-          // Refresh product list after update
           axios
             .get(`${backendUrl}/api/product/products`, {
               withCredentials: true,
